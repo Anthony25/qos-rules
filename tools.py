@@ -242,7 +242,7 @@ def class_show(interface, show_format=None):
 
 @multiple_interfaces
 def tc_filter(interface, action, prio, handle, flowid, parent=None,
-              protocol=None, **kwargs):
+              protocol="all", **kwargs):
     """
     Add/change/replace/delete filter
 
@@ -263,10 +263,6 @@ def tc_filter(interface, action, prio, handle, flowid, parent=None,
     command = ["tc", "filter", action, "dev", interface]
     if parent is not None:
         command += ["parent", parent]
-    if protocol is None:
-        tc_filter(interface, action, prio + 1, handle, flowid, parent,
-                  protocol="ipv6", **kwargs)
-        protocol = "ip"
     command += ["protocol", protocol, "prio", str(prio), "handle", str(handle),
                 "fw", "flowid", flowid]
     for i, j in kwargs.items():
@@ -276,7 +272,7 @@ def tc_filter(interface, action, prio, handle, flowid, parent=None,
 
 
 @multiple_interfaces
-def filter_add(interface, parent, prio, handle, flowid, protocol=None,
+def filter_add(interface, parent, prio, handle, flowid, protocol="all",
                **kwargs):
     """
     Add filter
@@ -296,7 +292,7 @@ def filter_add(interface, parent, prio, handle, flowid, protocol=None,
 
 
 @multiple_interfaces
-def filter_del(interface, prio, handle, flowid, parent=None, protocol=None,
+def filter_del(interface, prio, handle, flowid, parent=None, protocol="all",
                **kwargs):
     """
     Delete filter

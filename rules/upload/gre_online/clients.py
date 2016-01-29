@@ -9,7 +9,7 @@ from built_in_classes import FQCodelClass, PFIFOClass, BasicHTBClass
 GRE_UPLOAD = INTERFACES["gre_online"]["speed"]
 
 
-class Interactive(PFIFOClass):
+class Interactive(FQCodelClass):
     """
     Interactive Class, for low latency, high priority packets such as VOIP and
     DNS.

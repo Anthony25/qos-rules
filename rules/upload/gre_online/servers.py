@@ -10,7 +10,7 @@ GRE_UPLOAD = INTERFACES["gre_online"]["speed"]
 MIN_UPLOAD = GRE_UPLOAD/10
 
 
-class Interactive(PFIFOClass):
+class Interactive(FQCodelClass):
     """
     Interactive Class, for low latency, high priority packets such as VOIP and
     DNS.
