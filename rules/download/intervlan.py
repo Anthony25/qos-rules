@@ -1,15 +1,13 @@
-#!/usr/bin/python
-# Author: Anthony Ruhier
-# QoS for upload
+from pyqos.algorithms.htb import HTBFilterFQCodel
 
-from config import INTERFACES
-from built_in_classes import FQCodelClass
+from rules import app
 from rules.qos_formulas import burst_formula
 
-LAN_IF_SPEED = INTERFACES["lan_if"]["if_speed"]
+
+LAN_IF_SPEED = app.config["INTERFACES"]["lan_if"]["if_speed"]
 
 
-class InterVlan(FQCodelClass):
+class InterVlan(HTBFilterFQCodel):
     """
     Intervlan need to be fast
     """

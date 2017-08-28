@@ -1,16 +1,14 @@
-#!/usr/bin/python
-# Author: Anthony Ruhier
-# QoS for upload
+from pyqos.algorithms.htb import HTBClass, HTBFilterFQCodel
 
-from config import INTERFACES
+from rules import app
 from rules.qos_formulas import burst_formula, cburst_formula
-from built_in_classes import FQCodelClass, PFIFOClass, BasicHTBClass
-
-DOWNLOAD = INTERFACES["lan_if"]["speed"]
-UPLOAD = INTERFACES["public_if"]["speed"]
 
 
-class Interactive(PFIFOClass):
+DOWNLOAD = app.config["INTERFACES"]["lan_if"]["speed"]
+UPLOAD = app.config["INTERFACES"]["public_if"]["speed"]
+
+
+class Interactive(HTBFilterFQCodel):
     """
     Interactive Class, for low latency, high priority packets such as VOIP and
     DNS.
@@ -26,7 +24,7 @@ class Interactive(PFIFOClass):
     cburst = cburst_formula(rate, burst)
 
 
-class TCP_ack(FQCodelClass):
+class TCP_ack(HTBFilterFQCodel):
     """
     Class for TCP ACK.
 
@@ -44,7 +42,7 @@ class TCP_ack(FQCodelClass):
     interval = 15
 
 
-class SSH(FQCodelClass):
+class SSH(HTBFilterFQCodel):
     """
     Class for SSH connections.
 
@@ -63,7 +61,7 @@ class SSH(FQCodelClass):
     interval = 15
 
 
-class HTTP(FQCodelClass):
+class HTTP(HTBFilterFQCodel):
     """
     Class for HTTP/HTTPS connections.
     """
@@ -78,7 +76,7 @@ class HTTP(FQCodelClass):
     interval = 15
 
 
-class Default(FQCodelClass):
+class Default(HTBFilterFQCodel):
     """
     Default class
     """
@@ -93,7 +91,7 @@ class Default(FQCodelClass):
     interval = 15
 
 
-class Main(BasicHTBClass):
+class Main(HTBClass):
     classid = "1:11"
     rate = DOWNLOAD * 70/100
     ceil = DOWNLOAD
@@ -103,8 +101,10 @@ class Main(BasicHTBClass):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.add_child(Interactive())
-        self.add_child(TCP_ack())
-        self.add_child(SSH())
-        self.add_child(HTTP())
-        self.add_child(Default())
+        self.add_child(
+            Interactive(),
+            TCP_ack(),
+            SSH(),
+            HTTP(),
+            Default(),
+        )

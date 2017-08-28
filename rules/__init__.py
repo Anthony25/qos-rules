@@ -1,8 +1,7 @@
-#!/usr/bin/python
+from pyqos import PyQoS
+import config
+
+app = PyQoS()
+app.config.from_object(config)
 
 from rules import download, upload
-
-
-def apply_qos():
-    download.apply_qos()
-    upload.apply_qos()

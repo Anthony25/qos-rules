@@ -1,15 +1,15 @@
-#!/usr/bin/python
+from pyqos.algorithms.htb import HTBClass
 
-from config import INTERFACES
+from rules import app
 from rules.qos_formulas import burst_formula
-from built_in_classes import BasicHTBClass
 from .clients import Main as Clients
 from .servers import Main as Servers
 
-DOWNLOAD = INTERFACES["lan_if"]["speed"]
+
+DOWNLOAD = app.config["INTERFACES"]["lan_if"]["if_speed"]
 
 
-class Main(BasicHTBClass):
+class Main(HTBClass):
     classid = "1:10"
     prio = 0
     rate = DOWNLOAD
@@ -20,5 +20,4 @@ class Main(BasicHTBClass):
 
     def __init__(self, *args, **kwargs):
         r = super().__init__(*args, **kwargs)
-        self.add_child(Clients())
-        self.add_child(Servers())
+        self.add_child(Clients(), Servers())

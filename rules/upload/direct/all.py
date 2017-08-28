@@ -1,21 +1,18 @@
-#!/usr/bin/python
-# Author: Anthony Ruhier
-# QoS for upload
+from pyqos.algorithms.htb import HTBClass, HTBFilterFQCodel
 
-from config import INTERFACES
+from rules import app
 from rules.qos_formulas import burst_formula, cburst_formula
-from built_in_classes import FQCodelClass, PFIFOClass
 
-UPLOAD = INTERFACES["public_if"]["speed"]
+
+UPLOAD = app.config["INTERFACES"]["public_if"]["speed"]
 MIN_UPLOAD = 200
 
 
-class GRE_online(PFIFOClass):
+class OnlineTunnel(HTBFilterFQCodel):
     """
-    Class for gre_tunnel
+    Class for tunnel with Online
 
     As almost all traffic is going through the tunnel, very high priority.
-    Uses htb then fq-codel
     """
     parent = "1:1"
     classid = "1:100"
@@ -29,12 +26,9 @@ class GRE_online(PFIFOClass):
     interval = 15
 
 
-class Default(FQCodelClass):
+class Default(HTBFilterFQCodel):
     """
-    Class for gre_tunnel
-
-    As almost all traffic is going through the tunnel, very high priority.
-    Uses htb then fq-codel
+    Default class
     """
     classid = "1:500"
     prio = 50
@@ -45,11 +39,11 @@ class Default(FQCodelClass):
     interval = 15
 
 
-class Torrents(FQCodelClass):
+class Torrents(HTBFilterFQCodel):
     """
     Class for torrents
 
-    Very low priority. Uses htb then fq-codel
+    Very low priority.
     """
     classid = "1:600"
     prio = 100

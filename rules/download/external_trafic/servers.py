@@ -1,17 +1,15 @@
-#!/usr/bin/python
-# Author: Anthony Ruhier
-# QoS for upload
+from pyqos.algorithms.htb import HTBClass, HTBFilterFQCodel
 
-from config import INTERFACES
+from rules import app
 from rules.qos_formulas import burst_formula, cburst_formula
-from built_in_classes import FQCodelClass, PFIFOClass, BasicHTBClass
 
-DOWNLOAD = INTERFACES["lan_if"]["speed"]
+
+DOWNLOAD = app.config["INTERFACES"]["lan_if"]["speed"]
 MIN_DOWNLOAD = DOWNLOAD/10
-UPLOAD = INTERFACES["public_if"]["speed"]
+UPLOAD = app.config["INTERFACES"]["public_if"]["speed"]
 
 
-class Interactive(PFIFOClass):
+class Interactive(HTBFilterFQCodel):
     """
     Interactive Class, for low latency, high priority packets such as VOIP and
     DNS.
@@ -27,11 +25,11 @@ class Interactive(PFIFOClass):
     cburst = cburst_formula(rate, burst)
 
 
-class OpenVPN(FQCodelClass):
+class OpenVPN(HTBFilterFQCodel):
     """
     Class for openvpn.
 
-    We want openvpn to be fast. Uses htb then fq-codel.
+    We want openvpn to be fast
     """
     classid = "1:215"
     prio = 15
@@ -44,12 +42,12 @@ class OpenVPN(FQCodelClass):
     interval = 15
 
 
-class TCP_ack(FQCodelClass):
+class TCP_ack(HTBFilterFQCodel):
     """
     Class for TCP ACK.
 
     It's important to let the ACKs leave the network as fast as possible when a
-    host of the network is downloading. Uses htb then fq-codel.
+    host of the network is downloading
     """
     classid = "1:220"
     prio = 20
@@ -62,12 +60,12 @@ class TCP_ack(FQCodelClass):
     interval = 15
 
 
-class IRC(FQCodelClass):
+class IRC(HTBFilterFQCodel):
     """
     Class for IRC or services that doesn't need a lot of bandwidth but have to
     be quick.
 
-    A bit low priority, htb then fq-codel.
+    A bit low priority
     """
     classid = "1:2100"
     prio = 30
@@ -80,12 +78,11 @@ class IRC(FQCodelClass):
     interval = 15
 
 
-class Downloads(FQCodelClass):
+class Downloads(HTBFilterFQCodel):
     """
     Class for torrents and direct downloads
 
-    A bit high priority, I don't want to wait for my movie :p. Uses htb then
-    fq-codel
+    A bit high priority, I don't want to wait for my movie :p
     """
     classid = "1:2600"
     prio = 50
@@ -98,11 +95,9 @@ class Downloads(FQCodelClass):
     interval = 15
 
 
-class Default(FQCodelClass):
+class Default(HTBFilterFQCodel):
     """
     Default class
-
-    Uses htb then fq-codel
     """
     classid = "1:2500"
     prio = 100
@@ -115,7 +110,7 @@ class Default(FQCodelClass):
     interval = 15
 
 
-class Main(BasicHTBClass):
+class Main(HTBClass):
     classid = "1:12"
     rate = MIN_DOWNLOAD
     ceil = DOWNLOAD
@@ -125,9 +120,11 @@ class Main(BasicHTBClass):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.add_child(Interactive())
-        self.add_child(OpenVPN())
-        self.add_child(TCP_ack())
-        self.add_child(IRC())
-        self.add_child(Downloads())
-        self.add_child(Default())
+        self.add_child(
+            Interactive(),
+            OpenVPN(),
+            TCP_ack(),
+            IRC(),
+            Downloads(),
+            Default(),
+        )
