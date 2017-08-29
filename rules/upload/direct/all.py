@@ -1,14 +1,12 @@
-from pyqos.algorithms.htb import HTBClass, HTBFilterFQCodel
-
 from rules import app
-from rules.qos_formulas import burst_formula, cburst_formula
+from rules.custom_qos_class import CustomHTBFilterFQCodel
 
 
 UPLOAD = app.config["INTERFACES"]["public_if"]["speed"]
 MIN_UPLOAD = 200
 
 
-class OnlineTunnel(HTBFilterFQCodel):
+class OnlineTunnel(CustomHTBFilterFQCodel):
     """
     Class for tunnel with Online
 
@@ -20,13 +18,9 @@ class OnlineTunnel(HTBFilterFQCodel):
     mark = 100
     rate = UPLOAD - MIN_UPLOAD
     ceil = UPLOAD
-    burst = burst_formula(rate)
-    cburst = cburst_formula(rate, burst)
-    limit = cburst
-    interval = 15
 
 
-class Default(HTBFilterFQCodel):
+class Default(CustomHTBFilterFQCodel):
     """
     Default class
     """
@@ -34,12 +28,9 @@ class Default(HTBFilterFQCodel):
     prio = 50
     mark = 500
     rate = UPLOAD
-    burst = burst_formula(rate)
-    limit = burst
-    interval = 15
 
 
-class Torrents(HTBFilterFQCodel):
+class Torrents(CustomHTBFilterFQCodel):
     """
     Class for torrents
 
@@ -50,7 +41,3 @@ class Torrents(HTBFilterFQCodel):
     mark = 600
     rate = MIN_UPLOAD
     ceil = UPLOAD
-    burst = burst_formula(rate)
-    cburst = cburst_formula(rate, burst)
-    limit = cburst
-    interval = 15

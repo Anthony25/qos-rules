@@ -1,14 +1,12 @@
-from pyqos.algorithms.htb import HTBClass, HTBFilterFQCodel
-
 from rules import app
-from rules.qos_formulas import burst_formula, cburst_formula
+from rules.custom_qos_class import CustomHTBClass, CustomHTBFilterFQCodel
 
 
 DOWNLOAD = app.config["INTERFACES"]["lan_if"]["speed"]
 UPLOAD = app.config["INTERFACES"]["public_if"]["speed"]
 
 
-class Interactive(HTBFilterFQCodel):
+class Interactive(CustomHTBFilterFQCodel):
     """
     Interactive Class, for low latency, high priority packets such as VOIP and
     DNS.
@@ -20,11 +18,9 @@ class Interactive(HTBFilterFQCodel):
     mark = 110
     rate = DOWNLOAD * 30/100
     ceil = DOWNLOAD
-    burst = burst_formula(rate)
-    cburst = cburst_formula(rate, burst)
 
 
-class TCP_ack(HTBFilterFQCodel):
+class TCP_ack(CustomHTBFilterFQCodel):
     """
     Class for TCP ACK.
 
@@ -36,13 +32,9 @@ class TCP_ack(HTBFilterFQCodel):
     mark = 120
     rate = UPLOAD / 10
     ceil = DOWNLOAD / 10
-    burst = burst_formula(rate)
-    cburst = cburst_formula(rate, burst)
-    limit = cburst
-    interval = 15
 
 
-class SSH(HTBFilterFQCodel):
+class SSH(CustomHTBFilterFQCodel):
     """
     Class for SSH connections.
 
@@ -55,13 +47,9 @@ class SSH(HTBFilterFQCodel):
     mark = 1100
     rate = 400
     ceil = DOWNLOAD
-    burst = burst_formula(rate)
-    cburst = cburst_formula(rate, burst)
-    limit = cburst
-    interval = 15
 
 
-class HTTP(HTBFilterFQCodel):
+class HTTP(CustomHTBFilterFQCodel):
     """
     Class for HTTP/HTTPS connections.
     """
@@ -70,13 +58,9 @@ class HTTP(HTBFilterFQCodel):
     mark = 1200
     rate = DOWNLOAD * 10/100
     ceil = DOWNLOAD
-    burst = burst_formula(rate)
-    cburst = cburst_formula(rate, burst)
-    limit = cburst
-    interval = 15
 
 
-class Default(HTBFilterFQCodel):
+class Default(CustomHTBFilterFQCodel):
     """
     Default class
     """
@@ -85,18 +69,12 @@ class Default(HTBFilterFQCodel):
     mark = 1500
     rate = DOWNLOAD * 20/100
     ceil = DOWNLOAD
-    burst = burst_formula(rate)
-    cburst = cburst_formula(rate, burst)
-    limit = cburst
-    interval = 15
 
 
-class Main(HTBClass):
+class Main(CustomHTBClass):
     classid = "1:11"
     rate = DOWNLOAD * 70/100
     ceil = DOWNLOAD
-    burst = burst_formula(rate)
-    cburst = cburst_formula(rate, burst)
     prio = 0
 
     def __init__(self, *args, **kwargs):

@@ -1,14 +1,12 @@
-from pyqos.algorithms.htb import HTBClass, HTBFilterFQCodel
-
 from rules import app
-from rules.qos_formulas import burst_formula, cburst_formula
+from rules.custom_qos_class import CustomHTBClass, CustomHTBFilterFQCodel
 
 
 TUN_UPLOAD = app.config["INTERFACES"]["tun_online"]["speed"]
 MIN_UPLOAD = TUN_UPLOAD/10
 
 
-class Interactive(HTBFilterFQCodel):
+class Interactive(CustomHTBFilterFQCodel):
     """
     Interactive Class, for low latency, high priority packets such as VOIP and
     DNS.
@@ -20,11 +18,9 @@ class Interactive(HTBFilterFQCodel):
     mark = 210
     rate = TUN_UPLOAD * 10/100
     ceil = TUN_UPLOAD * 90/100
-    burst = burst_formula(rate)
-    cburst = cburst_formula(rate, burst)
 
 
-class OpenVPN(HTBFilterFQCodel):
+class OpenVPN(CustomHTBFilterFQCodel):
     """
     Class for openvpn.
 
@@ -35,13 +31,9 @@ class OpenVPN(HTBFilterFQCodel):
     mark = 215
     rate = TUN_UPLOAD/3
     ceil = TUN_UPLOAD
-    burst = burst_formula(rate) * 2
-    cburst = cburst_formula(rate, burst)
-    limit = cburst
-    interval = 15
 
 
-class TCP_ack(HTBFilterFQCodel):
+class TCP_ack(CustomHTBFilterFQCodel):
     """
     Class for TCP ACK.
 
@@ -53,13 +45,9 @@ class TCP_ack(HTBFilterFQCodel):
     mark = 220
     rate = MIN_UPLOAD
     ceil = TUN_UPLOAD
-    burst = burst_formula(rate)
-    cburst = cburst_formula(rate, burst)
-    limit = cburst
-    interval = 15
 
 
-class IRC(HTBFilterFQCodel):
+class IRC(CustomHTBFilterFQCodel):
     """
     Class for IRC or services that doesn't need a lot of bandwidth but have to
     be quick.
@@ -71,13 +59,9 @@ class IRC(HTBFilterFQCodel):
     mark = 2100
     rate = 100
     ceil = TUN_UPLOAD/5
-    burst = burst_formula(rate)
-    cburst = cburst_formula(rate, burst)
-    limit = cburst
-    interval = 15
 
 
-class Default(HTBFilterFQCodel):
+class Default(CustomHTBFilterFQCodel):
     """
     Default class
     """
@@ -86,13 +70,9 @@ class Default(HTBFilterFQCodel):
     mark = 2500
     rate = MIN_UPLOAD
     ceil = TUN_UPLOAD
-    burst = burst_formula(rate)
-    cburst = cburst_formula(rate, burst)
-    limit = cburst
-    interval = 15
 
 
-class Torrents(HTBFilterFQCodel):
+class Torrents(CustomHTBFilterFQCodel):
     """
     Class for torrents
 
@@ -103,18 +83,12 @@ class Torrents(HTBFilterFQCodel):
     mark = 2600
     rate = MIN_UPLOAD
     ceil = TUN_UPLOAD
-    burst = burst_formula(rate)
-    cburst = cburst_formula(rate, burst)
-    limit = cburst
-    interval = 15
 
 
-class Main(HTBClass):
+class Main(CustomHTBClass):
     classid = "1:12"
     rate = MIN_UPLOAD
     ceil = TUN_UPLOAD
-    burst = burst_formula(rate)
-    cburst = cburst_formula(rate, burst)
     prio = 1
 
     def __init__(self, *args, **kwargs):

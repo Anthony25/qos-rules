@@ -1,7 +1,5 @@
-from pyqos.algorithms.htb import HTBClass, HTBFilterFQCodel
-
 from rules import app
-from rules.qos_formulas import burst_formula, cburst_formula
+from rules.custom_qos_class import CustomHTBClass, CustomHTBFilterFQCodel
 
 
 DOWNLOAD = app.config["INTERFACES"]["lan_if"]["speed"]
@@ -9,7 +7,7 @@ MIN_DOWNLOAD = DOWNLOAD/10
 UPLOAD = app.config["INTERFACES"]["public_if"]["speed"]
 
 
-class Interactive(HTBFilterFQCodel):
+class Interactive(CustomHTBFilterFQCodel):
     """
     Interactive Class, for low latency, high priority packets such as VOIP and
     DNS.
@@ -21,11 +19,9 @@ class Interactive(HTBFilterFQCodel):
     mark = 210
     rate = DOWNLOAD * 10/100
     ceil = DOWNLOAD
-    burst = burst_formula(rate)
-    cburst = cburst_formula(rate, burst)
 
 
-class OpenVPN(HTBFilterFQCodel):
+class OpenVPN(CustomHTBFilterFQCodel):
     """
     Class for openvpn.
 
@@ -36,13 +32,9 @@ class OpenVPN(HTBFilterFQCodel):
     mark = 215
     rate = UPLOAD  # It has to send almost the same data it receives
     ceil = UPLOAD * 2
-    burst = burst_formula(rate)
-    cburst = cburst_formula(rate, burst)
-    limit = cburst
-    interval = 15
 
 
-class TCP_ack(HTBFilterFQCodel):
+class TCP_ack(CustomHTBFilterFQCodel):
     """
     Class for TCP ACK.
 
@@ -54,13 +46,9 @@ class TCP_ack(HTBFilterFQCodel):
     mark = 220
     rate = UPLOAD / 10
     ceil = DOWNLOAD / 10
-    burst = burst_formula(rate)
-    cburst = cburst_formula(rate, burst)
-    limit = cburst
-    interval = 15
 
 
-class IRC(HTBFilterFQCodel):
+class IRC(CustomHTBFilterFQCodel):
     """
     Class for IRC or services that doesn't need a lot of bandwidth but have to
     be quick.
@@ -72,13 +60,9 @@ class IRC(HTBFilterFQCodel):
     mark = 2100
     rate = 100
     ceil = DOWNLOAD/2
-    burst = burst_formula(rate)
-    cburst = cburst_formula(rate, burst)
-    limit = cburst
-    interval = 15
 
 
-class Downloads(HTBFilterFQCodel):
+class Downloads(CustomHTBFilterFQCodel):
     """
     Class for torrents and direct downloads
 
@@ -89,13 +73,9 @@ class Downloads(HTBFilterFQCodel):
     mark = 2600
     rate = DOWNLOAD * 20/100
     ceil = DOWNLOAD
-    burst = burst_formula(rate)
-    cburst = cburst_formula(rate, burst)
-    limit = cburst
-    interval = 15
 
 
-class Default(HTBFilterFQCodel):
+class Default(CustomHTBFilterFQCodel):
     """
     Default class
     """
@@ -104,18 +84,12 @@ class Default(HTBFilterFQCodel):
     mark = 2500
     rate = MIN_DOWNLOAD
     ceil = DOWNLOAD
-    burst = burst_formula(rate)
-    cburst = cburst_formula(rate, burst)
-    limit = cburst
-    interval = 15
 
 
-class Main(HTBClass):
+class Main(CustomHTBClass):
     classid = "1:12"
     rate = MIN_DOWNLOAD
     ceil = DOWNLOAD
-    burst = burst_formula(rate)
-    cburst = cburst_formula(rate, burst)
     prio = 1
 
     def __init__(self, *args, **kwargs):
