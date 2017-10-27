@@ -6,20 +6,6 @@ DOWNLOAD = app.config["INTERFACES"]["lan_if"]["speed"]
 UPLOAD = app.config["INTERFACES"]["public_if"]["speed"]
 
 
-class Interactive(CustomHTBFilterFQCodel):
-    """
-    Interactive Class, for low latency, high priority packets such as VOIP and
-    DNS.
-
-    Low priority, pass before everything else. Uses htb then pfifo.
-    """
-    classid = "1:110"
-    prio = 10
-    mark = 110
-    rate = DOWNLOAD * 30/100
-    ceil = DOWNLOAD
-
-
 class TCP_ack(CustomHTBFilterFQCodel):
     """
     Class for TCP ACK.
@@ -28,10 +14,24 @@ class TCP_ack(CustomHTBFilterFQCodel):
     fq-codel.
     """
     classid = "1:120"
-    prio = 20
+    prio = 10
     mark = 120
     rate = UPLOAD / 10
     ceil = DOWNLOAD / 10
+
+
+class Interactive(CustomHTBFilterFQCodel):
+    """
+    Interactive Class, for low latency, high priority packets such as VOIP and
+    DNS.
+
+    Low priority, pass before everything else. Uses htb then pfifo.
+    """
+    classid = "1:110"
+    prio = 20
+    mark = 110
+    rate = DOWNLOAD * 30/100
+    ceil = DOWNLOAD
 
 
 class SSH(CustomHTBFilterFQCodel):

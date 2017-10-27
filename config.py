@@ -6,13 +6,13 @@ INTERFACES = {
     "public_if": {  # network card which has the public IP
         "name": "eth1",
         "if_speed": 1048576,
-        "speed": 16384,  # Upload
+        "speed": 20000,  # Upload
     },
 
     "lan_if": {  # network card for the LAN subnets
         "name": "eth0",
         "if_speed": 50000000,
-        "speed": 22000,  # Download
+        "speed": 30000,  # Download
     },
 
     "tun_online": {  # gre tunnel with online dedibox

@@ -7,6 +7,20 @@ MIN_DOWNLOAD = DOWNLOAD/10
 UPLOAD = app.config["INTERFACES"]["public_if"]["speed"]
 
 
+class TCP_ack(CustomHTBFilterFQCodel):
+    """
+    Class for TCP ACK.
+
+    It's important to let the ACKs leave the network as fast as possible when a
+    host of the network is downloading
+    """
+    classid = "1:220"
+    prio = 5
+    mark = 220
+    rate = UPLOAD / 10
+    ceil = DOWNLOAD / 10
+
+
 class Interactive(CustomHTBFilterFQCodel):
     """
     Interactive Class, for low latency, high priority packets such as VOIP and
@@ -32,20 +46,6 @@ class OpenVPN(CustomHTBFilterFQCodel):
     mark = 215
     rate = UPLOAD  # It has to send almost the same data it receives
     ceil = UPLOAD * 2
-
-
-class TCP_ack(CustomHTBFilterFQCodel):
-    """
-    Class for TCP ACK.
-
-    It's important to let the ACKs leave the network as fast as possible when a
-    host of the network is downloading
-    """
-    classid = "1:220"
-    prio = 20
-    mark = 220
-    rate = UPLOAD / 10
-    ceil = DOWNLOAD / 10
 
 
 class IRC(CustomHTBFilterFQCodel):
