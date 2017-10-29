@@ -16,7 +16,7 @@ INTERFACES = {
     },
 
     "tun_online": {  # gre tunnel with online dedibox
-        "name": "tun-online",
+        "name": "tun-srvo-02",
     },
 }
 
