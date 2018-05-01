@@ -5,14 +5,14 @@
 INTERFACES = {
     "public_if": {  # network card which has the public IP
         "name": "eth1",
-        "if_speed": 1048576,
-        "speed": 20000,  # Upload
+        "if_speed": 960 * 2**10,
+        "speed": 230 * 2**10,  # Upload
     },
 
     "lan_if": {  # network card for the LAN subnets
         "name": "eth0",
-        "if_speed": 50000000,
-        "speed": 30000,  # Download
+        "if_speed": 50 * 2**20,
+        "speed": 920 * 2**10,  # Download
     },
 
     "tun_online": {  # gre tunnel with online dedibox
@@ -20,9 +20,10 @@ INTERFACES = {
     },
 }
 
-# Because of torrents and overhead
-INTERFACES["tun_online"]["speed"] = (
-    INTERFACES["public_if"]["speed"] * 0.95 - 250
+# Because of overhead
+INTERFACES["tun_online"]["speed_lambda"] = lambda s: s * 0.95 - 250
+INTERFACES["tun_online"]["speed"] = INTERFACES["tun_online"]["speed_lambda"](
+    INTERFACES["public_if"]["speed"]
 )
 
 # If enabled, this script will not execute any command, just prints it

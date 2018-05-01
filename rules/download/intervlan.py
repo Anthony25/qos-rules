@@ -12,10 +12,10 @@ class InterVlan(HTBFilterFQCodel):
     Intervlan need to be fast
     """
     classid = "1:15"
-    rate = LAN_IF_SPEED
-    burst = burst_formula(rate) * 3
+    rate = (100, )
+    burst = (burst_formula, [], {"post_compute": lambda x: x*3})
     limit = burst
     interval = 10
     codel_quantum = 1514
     prio = 0
-    mark = 10
+    mark = 0xa

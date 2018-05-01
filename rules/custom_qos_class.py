@@ -6,8 +6,8 @@ from rules.qos_formulas import burst_formula, cburst_formula
 class CustomHTBClass(HTBClass):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.burst = burst_formula(self.rate)
-        self.cburst = cburst_formula(self.rate, self.burst)
+        self.burst = (burst_formula, )
+        self.cburst = (cburst_formula, )
 
 
 class CustomHTBFilterFQCodel(HTBFilterFQCodel):
@@ -18,7 +18,7 @@ class CustomHTBFilterFQCodel(HTBFilterFQCodel):
     """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.burst = burst_formula(self.rate)
-        self.cburst = cburst_formula(self.rate, self.burst)
-        self.limit = self.cburst
+        self.burst = (burst_formula, )
+        self.cburst = (cburst_formula, )
+        # self.limit = self.cburst
         self.interval = 15
