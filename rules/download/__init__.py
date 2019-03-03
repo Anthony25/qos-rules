@@ -10,7 +10,7 @@ lan_if = app.config["INTERFACES"]["lan_if"]
 root_class = RootHTBClass(
     interface=lan_if["name"],
     rate=lan_if["if_speed"],
-    burst=(burst_formula, ),
+    burst=(burst_formula,),
     qdisc_prefix_id="1:",
     default=0xa,
 )

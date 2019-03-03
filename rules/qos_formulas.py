@@ -1,8 +1,3 @@
-#!/usr/bin/python
-# Author: Anthony Ruhier
-# Magic formulas for QoS
-
-
 def burst_formula(obj, post_compute=None):
     """
     Cisco formula to calculates the burst

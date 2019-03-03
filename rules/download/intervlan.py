@@ -4,9 +4,6 @@ from rules import app
 from rules.qos_formulas import burst_formula
 
 
-LAN_IF_SPEED = app.config["INTERFACES"]["lan_if"]["if_speed"]
-
-
 class InterVlan(HTBFilterFQCodel):
     """
     Intervlan need to be fast
