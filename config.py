@@ -6,7 +6,7 @@ INTERFACES = {
     "public_if": {  # network card which has the public IP
         "name": "eth1",
         "if_speed": 960 * 2**10,
-        "speed": 230 * 2**10,  # Upload
+        "speed": 280 * 2**10,  # Upload
     },
 
     "lan_if": {  # network card for the LAN subnets
@@ -16,7 +16,7 @@ INTERFACES = {
     },
 
     "tun_online": {  # gre tunnel with online dedibox
-        "name": "tun-srvo-02",
+        "name": "tun-vm-router-1",
     },
 }
 
