@@ -9,7 +9,6 @@ class CustomHTBClass(HTBClass):
         self.cburst = (cburst_formula, )
         super().__init__(*args, **kwargs)
 
-
 class CustomHTBFilterFQCodel(HTBFilterFQCodel):
     """
     Class for torrents and direct downloads
@@ -19,5 +18,5 @@ class CustomHTBFilterFQCodel(HTBFilterFQCodel):
     def __init__(self, *args, **kwargs):
         self.burst = (burst_formula,)
         self.cburst = (cburst_formula,)
-        self.interval = 15
+        self.qdisc_kwargs = {"interval": 15}
         super().__init__(*args, **kwargs)

@@ -12,7 +12,7 @@ INTERFACES = {
     "lan_if": {  # network card for the LAN subnets
         "name": "eth0",
         "if_speed": 50 * 2**20,
-        "speed": 900 * 2**10,  # Download
+        "speed": 860 * 2**10,  # Download
     },
 
     "tun_online": {  # gre tunnel with online dedibox
